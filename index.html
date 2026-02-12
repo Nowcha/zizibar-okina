@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZIZIBAR～翁～ | VRChat Event</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&family=Zen+Old+Mincho&display=swap');
+
+        body {
+            font-family: 'Zen Old Mincho', serif;
+            /* 和風で落ち着いた明朝体 */
+        }
+
+        /* スクロールバーのカスタマイズ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        /* 背景画像のクロスフェード用 */
+        .bg-layer {
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        /* フリップカード用アニメーションスタイル */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        /* .flipped クラスがつくと回転 */
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.5rem;
+            /* rounded-lg と合わせる */
+            overflow: hidden;
+        }
+
+        .flip-card-front {
+            background-color: transparent;
+        }
+
+        /* Staff用丸形対応 */
+        .rounded-full .flip-card-front,
+        .rounded-full .flip-card-back {
+            border-radius: 9999px !important;
+        }
+
+        .flip-card-back {
+            background-color: #1f2937;
+            /* gray-800 */
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border: 1px solid #374151;
+            /* gray-700 */
+        }
+
+        /* ギャラリー用: スクロールバーを隠すユーティリティ */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .cursor-grab {
+            cursor: grab;
+        }
+
+        .cursor-grabbing {
+            cursor: grabbing;
+        }
+
+        /* モーダル用アニメーション */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 300ms ease-out, transform 300ms ease-out;
+        }
+
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms ease-in, transform 200ms ease-in;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-gray-200 antialiased leading-relaxed relative">
+
+    <!-- Background Layers (Fixed) -->
+    <div id="bg-container" class="fixed inset-0 z-0">
+        <!-- 
+            背景画像の設定
+        -->
+        <div id="bg-layer-1"
+            class="bg-layer absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100 transition-transform duration-[10s] hover:scale-105"
+            style="background-image: url('./bg_top.png');"></div>
+        <div id="bg-layer-2"
+            class="bg-layer absolute inset-0 bg-cover bg-center bg-no-repeat opacity-0 transition-transform duration-[10s] hover:scale-105">
+        </div>
+        <!-- オーバーレイ -->
+        <div class="absolute inset-0 bg-black/70 pointer-events-none"></div>
+    </div>
+
+    <!-- Navigation (Leader) -->
+    <nav class="fixed top-4 right-4 z-50">
+        <div
+            class="bg-black/80 backdrop-blur-md border border-gray-700 rounded-full px-4 py-3 md:px-6 md:py-3 shadow-2xl">
+            <ul class="flex space-x-3 md:space-x-6 text-[10px] md:text-sm font-serif tracking-widest text-gray-400">
+                <li><a href="#top"
+                        class="hover:text-white transition-colors hover:border-b hover:border-white pb-0.5">TOP</a></li>
+                <li><a href="#concept"
+                        class="hover:text-white transition-colors hover:border-b hover:border-white pb-0.5">CONCEPT</a>
+                </li>
+                <li><a href="#gallery"
+                        class="hover:text-white transition-colors hover:border-b hover:border-white pb-0.5">GALLERY</a>
+                </li>
+                <li><a href="#system"
+                        class="hover:text-white transition-colors hover:border-b hover:border-white pb-0.5">SYSTEM</a>
+                </li>
+                <li><a href="#notice"
+                        class="hover:text-white transition-colors hover:border-b hover:border-white pb-0.5">NOTICE</a>
+                </li>
+                <li><a href="#member"
+                        class="hover:text-white transition-colors hover:border-b hover:border-white pb-0.5">MEMBER</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="top"
+        class="relative z-10 w-full h-screen min-h-[600px] flex flex-col justify-center items-center text-center px-4 border-b border-white/10"
+        data-section="top">
+        <div class="relative z-10 max-w-4xl mx-auto space-y-8 animate-fade-in-up">
+            <p class="text-sm md:text-base tracking-[0.2em] text-gray-400">VRChat Bar Event</p>
+            <h1 class="text-5xl md:text-7xl font-bold tracking-widest text-white mb-4"
+                style="font-family: 'Shippori Mincho', serif;">
+                ZIZIBAR<br>
+                <span class="text-3xl md:text-5xl mt-2 block">～翁～</span>
+            </h1>
+            <p
+                class="text-lg md:text-xl font-light italic text-gray-300 border-t border-b border-gray-500 py-6 inline-block">
+                おっさん達が運営する<br class="md:hidden">おっさんのおっさんによる<br>おっさんのためのBAR
+            </p>
+            <div class="mt-8 space-y-6">
+                <div>
+                    <p class="text-xl md:text-2xl font-bold text-white mb-2">開催：不定期 23:15 - 24:00</p>
+                    <p class="text-gray-400 text-sm md:text-base">
+                        最新の開催情報や詳細はX（旧Twitter）をご確認ください
+                    </p>
+                </div>
+
+                <a href="https://x.com/ZIZIBAR_OKINA" target="_blank" rel="noopener noreferrer"
+                    class="inline-block bg-white text-black px-8 py-3 font-bold hover:bg-gray-200 transition duration-300 transform hover:scale-105 rounded-sm">
+                    公式Xをチェック
+                </a>
+
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Concept Section -->
+    <section id="concept"
+        class="relative z-10 py-20 px-6 max-w-3xl mx-auto text-center min-h-[80vh] flex flex-col justify-center"
+        data-section="concept">
+        <div class="bg-black/40 p-8 md:p-12 rounded-lg backdrop-blur-sm border border-white/5">
+            <h2
+                class="text-3xl font-bold mb-12 tracking-wider border-b border-gray-600 pb-4 inline-block text-gray-100">
+                CONCEPT</h2>
+            <div class="space-y-8 text-lg">
+                <h3 class="text-2xl font-semibold text-white font-serif">1対1のゆったりした雑談</h3>
+                <p class="text-gray-300 leading-8">
+                    ここは、喧騒を離れて語らいたい夜のための場所<br>
+                    ZIZIBAR～翁～は、1対1の対話を大切にしています<br>
+                    ただ静かに、グラスを傾けながら言葉を交わしましょう
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section (Updated) -->
+    <section id="gallery" class="relative z-10 py-20 bg-black/60 overflow-hidden" data-section="gallery">
+        <div class="text-center mb-10 px-6">
+            <h2
+                class="text-3xl font-bold tracking-wider text-white bg-black/40 inline-block px-8 py-2 rounded backdrop-blur-sm mb-4">
+                GALLERY</h2>
+            <p class="text-gray-400 text-sm tracking-wide">営業中の様子（タップで拡大できます）</p>
+        </div>
+
+        <!-- 手動スクロール可能エリア -->
+        <div class="relative w-full group">
+            <!-- 左右のフェードエフェクト -->
+            <div
+                class="absolute inset-y-0 left-0 w-8 md:w-20 bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none">
+            </div>
+            <div
+                class="absolute inset-y-0 right-0 w-8 md:w-20 bg-gradient-to-l from-black via-black/50 to-transparent z-10 pointer-events-none">
+            </div>
+
+            <!-- 写真リスト（JSで生成）: overflow-x-auto でスクロール可能に -->
+            <div id="gallery-track"
+                class="flex items-center gap-4 overflow-x-auto no-scrollbar cursor-grab px-4 md:px-20 py-4 select-none">
+                <!-- ここに画像が挿入されます -->
+            </div>
+        </div>
+    </section>
+
+    <!-- System Section -->
+    <section id="system" class="relative z-10 py-20 min-h-[80vh] flex flex-col justify-center" data-section="system">
+        <div class="max-w-4xl mx-auto px-6">
+            <!-- 見出しを中央揃えにするためのラッパー -->
+            <div class="text-center mb-12">
+                <h2
+                    class="text-3xl font-bold tracking-wider text-white bg-black/40 inline-block px-8 py-2 rounded backdrop-blur-sm">
+                    SYSTEM</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Flow -->
+                <div
+                    class="bg-black/60 backdrop-blur-md p-8 border border-white/10 hover:border-white/30 transition duration-300 text-left">
+                    <h3 class="text-xl font-bold text-white mb-4 border-b border-gray-500 pb-2 inline-block">接客スタイル</h3>
+                    <ul class="space-y-4 text-gray-300">
+                        <li class="flex items-start">
+                            <span class="text-white font-bold mr-2">・</span>
+                            <span>15分 × 2ローテーション制</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-white font-bold mr-2">・</span>
+                            <span>キャストと1対1でお話しいただけます</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Join Info -->
+                <div
+                    class="bg-black/60 backdrop-blur-md p-8 border border-white/10 hover:border-white/30 transition duration-300 text-left">
+                    <h3 class="text-xl font-bold text-white mb-4 border-b border-gray-500 pb-2 inline-block">入店方法</h3>
+                    <p class="text-gray-300 mb-4">
+                        <span class="text-white font-bold">Request Invite（1回）</span><br>
+                        Request先：<a href="https://vrchat.com/home/user/usr_23510d60-b569-4985-a3db-fee4fdeb0d61"
+                            target="_blank" rel="noopener noreferrer"
+                            class="text-xl font-bold text-white border-b border-white hover:text-gray-300 transition-colors">オブにる</a>
+                    </p>
+                    <p class="text-sm text-gray-400">
+                        ※事前にフレンド申請をお願いします
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules Section -->
+    <section id="notice" class="relative z-10 py-20 px-6 max-w-4xl mx-auto min-h-[60vh] flex flex-col justify-center"
+        data-section="notice">
+        <h2
+            class="text-3xl font-bold mb-12 text-center tracking-wider text-white bg-black/40 inline-block px-8 py-2 mx-auto rounded backdrop-blur-sm">
+            NOTICE</h2>
+        <div class="border border-white/20 p-8 md:p-12 relative bg-black/70 backdrop-blur-md">
+            <div
+                class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-black px-4 text-gray-400 text-sm tracking-widest border border-gray-700">
+                禁止事項</div>
+            <ul class="space-y-4 text-gray-300 list-disc list-inside">
+                <li>イベント中のキャストへのフレンド申請</li>
+                <li>許可のない録音、配信行為</li>
+                <li>版権アバター、違法アバター（リッピング等）の使用</li>
+                <li>過度なパーティクル、巨大なアバター、音が出るアバターなどの使用</li>
+            </ul>
+            <p class="mt-6 text-center text-gray-500 text-sm">
+                全てのお客様が快適に過ごせるよう、ご協力をお願いいたします
+            </p>
+        </div>
+    </section>
+
+    <!-- Member Section -->
+    <section id="member" class="relative z-10 py-20 bg-black/50" data-section="member">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-12 tracking-wider text-white">MEMBER</h2>
+
+            <div class="mb-20">
+                <h3
+                    class="text-xl text-gray-500 mb-10 tracking-widest uppercase relative inline-block after:content-[''] after:block after:w-full after:h-px after:bg-gray-700 after:mt-2">
+                    - Cast -</h3>
+                <p class="text-xs text-gray-400 mb-6">※画像をタップすると紹介文が表示されます</p>
+
+                <!-- Cast Grid: スマホ2列、タブレット3列、PC4列 -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-10 justify-items-center">
+
+                    <!-- Cast 1: オブにる -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <!-- Front: Image -->
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./ofnir1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="オブにる"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <!-- Back: Intro -->
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        翁のオーナー<br>
+                                        酒・たばこ・<br>
+                                        ギャンブルの<br>
+                                        話題はこちらまで
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">オブにる</p>
+                    </div>
+
+                    <!-- Cast 2: ぺろっち -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./pero1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="ぺろっち"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        翁の店長<br>
+                                        どこかで歌を<br>
+                                        歌っています<br>
+                                        …LoLをやらないか？
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">ぺろっち</p>
+                    </div>
+
+                    <!-- Cast 3: シイロ -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./shiiiro1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="シイロ"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        イケボ担当<br>
+                                        私をあなた色に<br>
+                                        染めてくれませんか？<br>
+                                        ボイスリクエスト募集
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">シイロ</p>
+                    </div>
+
+                    <!-- Cast 4: もゆるん -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./moyu1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="もゆるん"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        かわいい担当<br>
+                                        見た目はきゅるん<br>
+                                        中身はおっさん<br>
+                                        なうちゃと同級生
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">もゆるん</p>
+                    </div>
+
+                    <!-- Cast 5: あるみ・かん -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./mikan1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="あるみ・かん"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        音割れ担当<br>
+                                        ※デスクトップ時限定<br>
+                                        開店時から在籍するも<br>
+                                        永遠に研修生のまま
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">あるみ・かん</p>
+                    </div>
+
+                    <!-- Cast 6: もととき -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./moto1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="もととき"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        ありがちぇぇぇ担当<br>
+                                        会いに来てくれたら<br>
+                                        たのちーぱっぷの<br>
+                                        うれちーぱっぷー
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">もととき</p>
+                    </div>
+
+                    <!-- Cast 7: riamusu -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./musu1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="riamusu"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        レアキャスト担当<br>
+                                        会えた方はラッキー<br>
+                                        撫でるの大好き<br>
+                                        逆に撫でてもいいよ？
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">riamusu</p>
+                    </div>
+
+                    <!-- Cast 8: コムギ -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./gin1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="コムギ"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        お兄さん担当<br>
+                                        声も姿も好青年<br>
+                                        でもちょっぴりエッチ<br>
+                                        あだ名は"ぎんぎん"
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">コムギ</p>
+                    </div>
+
+                    <!-- Cast 9: SABA112050 -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./saba1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="SABA112050"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        癒し担当<br>
+                                        23時を超えると<br>
+                                        頭が回らなくなります<br>
+                                        口癖は「はい～」
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">SABA112050
+                        </p>
+                    </div>
+
+                    <!-- Cast 10: khloneco -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./funya1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="khloneco"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        ふにゃオス担当<br>
+                                        プライベートでは<br>
+                                        首が座ってない<br>
+                                        でも実はしっかり者
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">khloneco
+                        </p>
+                    </div>
+
+                    <!-- Cast 11: なうちゃ -->
+                    <div class="group w-full max-w-[180px]">
+                        <div class="flip-card perspective-1000 aspect-square mb-4 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div
+                                    class="flip-card-front rounded-lg border border-gray-700 shadow-lg group-hover:border-gray-500 transition duration-300">
+                                    <img src="./nowcha1.jpg"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/300x300/1a1a1a/666666?text=Save+HTML+to+View';"
+                                        alt="なうちゃ"
+                                        class="w-full h-full object-cover object-top opacity-70 group-hover:opacity-100 transition duration-500 transform group-hover:scale-110">
+                                </div>
+                                <div class="flip-card-back rounded-lg shadow-lg">
+                                    <p class="text-sm leading-relaxed text-gray-300">
+                                        イケメン担当<br>
+                                        イケメンが増えてきて<br>
+                                        個性を失いつつある<br>
+                                        もゆるんと同級生
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-200 font-medium tracking-wide group-hover:text-white transition">なうちゃ</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div>
+                <h3
+                    class="text-xl text-gray-500 mb-10 tracking-widest uppercase relative inline-block after:content-[''] after:block after:w-full after:h-px after:bg-gray-700 after:mt-2">
+                    - Staff -</h3>
+                <p class="text-xs text-gray-400 mb-6 md:hidden">※画像をタップすると紹介文が表示されます</p>
+                <div class="flex flex-wrap justify-center gap-10">
+
+                    <!-- Staff 1 -->
+                    <div class="group w-36 text-center">
+                        <div class="flip-card perspective-1000 w-24 h-24 mx-auto mb-3 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <!-- Front -->
+                                <div
+                                    class="flip-card-front !rounded-full border border-gray-700 overflow-hidden group-hover:border-gray-500 transition duration-300">
+                                    <img src="./taisa1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/200x200/1a1a1a/666666?text=Staff';"
+                                        alt="スコウロンスキー大佐"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500">
+                                </div>
+                                <!-- Back -->
+                                <div
+                                    class="flip-card-back !rounded-full shadow-lg bg-gray-800 border border-gray-600 flex items-center justify-center p-1">
+                                    <p class="text-[10px] leading-tight text-gray-300">
+                                        キャスト<br>
+                                        やりません<br>
+                                        絶対に
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm group-hover:text-white transition">スコウロンスキー大佐</p>
+                    </div>
+
+                    <!-- Staff 2 -->
+                    <div class="group w-36 text-center">
+                        <div class="flip-card perspective-1000 w-24 h-24 mx-auto mb-3 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <!-- Front -->
+                                <div
+                                    class="flip-card-front !rounded-full border border-gray-700 overflow-hidden group-hover:border-gray-500 transition duration-300">
+                                    <img src="./mera1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/200x200/1a1a1a/666666?text=Staff';"
+                                        alt="めらーい"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500">
+                                </div>
+                                <!-- Back -->
+                                <div
+                                    class="flip-card-back !rounded-full shadow-lg bg-gray-800 border border-gray-600 flex items-center justify-center p-1">
+                                    <p class="text-[10px] leading-tight text-gray-300">
+                                        生粋の<br>
+                                        日本（メス）<br>
+                                        男子
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm group-hover:text-white transition">めらーい</p>
+                    </div>
+
+                    <!-- Staff 3 -->
+                    <div class="group w-36 text-center">
+                        <div class="flip-card perspective-1000 w-24 h-24 mx-auto mb-3 cursor-pointer"
+                            onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <!-- Front -->
+                                <div
+                                    class="flip-card-front !rounded-full border border-gray-700 overflow-hidden group-hover:border-gray-500 transition duration-300">
+                                    <img src="./mato1.png"
+                                        onerror="this.onerror=null; this.src='https://placehold.co/200x200/1a1a1a/666666?text=Staff';"
+                                        alt="マトーサン"
+                                        class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500">
+                                </div>
+                                <!-- Back -->
+                                <div
+                                    class="flip-card-back !rounded-full shadow-lg bg-gray-800 border border-gray-600 flex items-center justify-center p-1">
+                                    <p class="text-[10px] leading-tight text-gray-300">
+                                        歌うたいは<br>
+                                        私に一声<br>
+                                        かけてください
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm group-hover:text-white transition">マトーサン</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Image Enlargement -->
+    <div id="image-modal"
+        class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-black/90 p-4 transition-opacity duration-300 opacity-0"
+        onclick="closeModal()">
+        <div class="relative max-w-4xl max-h-[90vh] w-full flex items-center justify-center"
+            onclick="event.stopPropagation()">
+            <button onclick="closeModal()"
+                class="absolute -top-10 right-0 text-white text-3xl hover:text-gray-400 transition">&times;</button>
+            <img id="modal-img" src="" alt="Enlarged Image"
+                class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('ZIZIBAR Loaded');
+            initScrollBackground();
+            initGallery();
+        });
+
+        // --- Modal Logic ---
+        function openModal(src) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-img');
+            modalImg.src = src;
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('modal-img').src = '';
+            }, 300);
+        }
+
+        // --- Gallery Logic ---
+        function initGallery() {
+            // ★ここに表示したい画像ファイル名をリストアップしてください★
+            // "dozens" (数十枚) ある場合は、カンマ区切りで列挙します
+            // 例: "./photo1.jpg", "./photo2.jpg", "./event_01.png", ...
+            const galleryImages = [
+                "./Gallery01.png",
+                "./Gallery02.png",
+                "./Gallery03.png",
+                "./Gallery04.png",
+                "./Gallery05.png",
+                "./Gallery06.png",
+                "./Gallery07.png",
+                "./Gallery08.png",
+                "./Gallery09.png",
+                "./Gallery10.png",
+                "./Gallery11.png",
+            ];
+
+            const track = document.getElementById('gallery-track');
+
+            // 画像リストからHTMLを生成する関数
+            const createImgElement = (src) => {
+                const div = document.createElement('div');
+                div.className = "flex-shrink-0 w-64 h-40 md:w-80 md:h-48 rounded-lg border border-gray-700 shadow-lg relative group overflow-hidden cursor-pointer";
+
+                // クリックイベントの追加（ドラッグ移動時は発火させない）
+                div.addEventListener('click', () => {
+                    // isDragMoveがfalse（クリック動作）の場合のみモーダルを開く
+                    if (!isDragMove) {
+                        openModal(src);
+                    }
+                });
+
+                div.innerHTML = `
+                    <img src="${src}" 
+                         alt="Gallery Image" 
+                         draggable="false"
+                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-out select-none"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/1a1a1a/666666?text=No+Image';">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-300 pointer-events-none"></div>
+                `;
+                return div;
+            };
+
+            // ギャラリーの初期化
+            // 自動スクロール + 手動スクロールのハイブリッド実装
+
+            // 画像を追加（最低でも画面幅を埋める必要があるため、少ない場合は繰り返す）
+            let imagesToDisplay = [...galleryImages];
+            while (imagesToDisplay.length < 10) { // 最低10枚分くらいになるまで繰り返す
+                imagesToDisplay = [...imagesToDisplay, ...galleryImages];
+            }
+            // 無限ループっぽく見せるためにさらに倍にする
+            imagesToDisplay = [...imagesToDisplay, ...imagesToDisplay];
+
+            imagesToDisplay.forEach(src => {
+                track.appendChild(createImgElement(src));
+            });
+
+            // --- Scroll Animation & Drag Logic ---
+            let scrollAmount = 0;
+            const speed = 0.5; // 自動スクロールの速度
+            let isHovering = false;
+            let isDragging = false;
+            let isDragMove = false; // ドラッグ移動が発生したかどうかのフラグ
+            let startX;
+            let scrollLeft;
+            let animationId;
+
+            // 自動スクロールループ
+            const animate = () => {
+                if (!isHovering && !isDragging) {
+                    scrollAmount += speed;
+                    // 最大まで行ったら最初に戻す（簡易ループ）
+                    if (scrollAmount >= track.scrollWidth - track.clientWidth) {
+                        scrollAmount = 0;
+                    }
+                    track.scrollLeft = scrollAmount;
+                } else {
+                    // 手動操作中は現在位置を同期
+                    scrollAmount = track.scrollLeft;
+                }
+                animationId = requestAnimationFrame(animate);
+            };
+
+            // アニメーション開始
+            animationId = requestAnimationFrame(animate);
+
+            // ホバー/タッチで一時停止
+            track.addEventListener('mouseenter', () => isHovering = true);
+            track.addEventListener('mouseleave', () => {
+                isHovering = false;
+                isDragging = false;
+                track.classList.remove('cursor-grabbing');
+                track.classList.add('cursor-grab');
+            });
+            track.addEventListener('touchstart', () => isHovering = true);
+            track.addEventListener('touchend', () => {
+                // スマホは慣性スクロールがあるので、すぐに再開せず少し待つのが自然だが、
+                // 簡易的にタッチ終了で再開とする（操作していなければ）
+                setTimeout(() => isHovering = false, 1000);
+                // タッチ終了時にドラッグフラグをリセット（少し遅らせることでクリック判定への影響を防ぐ）
+                setTimeout(() => isDragMove = false, 50);
+            });
+
+            // スマホでのスワイプ判定用
+            let touchStartX = 0;
+            track.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                isDragMove = false;
+            });
+            track.addEventListener('touchmove', (e) => {
+                if (Math.abs(e.touches[0].clientX - touchStartX) > 5) {
+                    isDragMove = true;
+                }
+            });
+
+            // ドラッグスクロール (PC用)
+            track.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                isHovering = true; // ドラッグ中も停止扱い
+                isDragMove = false; // ドラッグ開始時はfalse
+                track.classList.remove('cursor-grab');
+                track.classList.add('cursor-grabbing');
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+            });
+
+            track.addEventListener('mouseup', () => {
+                isDragging = false;
+                track.classList.remove('cursor-grabbing');
+                track.classList.add('cursor-grab');
+                // クリックイベントが発火する前にisDragMoveがリセットされないように注意
+                // clickイベントはmouseupの後に発火するため、ここではリセットしない
+            });
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 2; // スクロール速度倍率
+
+                // わずかな動きはクリックとみなすための閾値
+                if (Math.abs(walk) > 5) {
+                    isDragMove = true;
+                }
+
+                track.scrollLeft = scrollLeft - walk;
+                scrollAmount = track.scrollLeft; // 位置情報を更新
+            });
+        }
+
+        // --- Scroll Background Logic ---
+        function initScrollBackground() {
+            // 背景画像のリスト
+            // お手持ちの写真を背景にする場合は、画像ファイル名をここに記述してください。
+            // 例: top: "./bg_top.jpg",
+            const backgrounds = {
+                top: "./bg_top.png", // Bar Counter
+                concept: "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?q=80&w=1920&auto=format&fit=crop", // Lounge
+                gallery: "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=1920&auto=format&fit=crop", // Atmosphere
+                system: "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?q=80&w=1920&auto=format&fit=crop", // Whiskey Glass
+                notice: "./bg_notice.jpg",   // Notice
+                member: "./bg_member.png"  // Bottles
+            };
+
+            const layer1 = document.getElementById('bg-layer-1');
+            const layer2 = document.getElementById('bg-layer-2');
+            let activeLayer = 1;
+            let currentSectionId = 'top';
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5 // 画面の50%が見えたら切り替え
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const sectionId = entry.target.dataset.section;
+                        if (sectionId && sectionId !== currentSectionId) {
+                            currentSectionId = sectionId;
+                            changeBackground(backgrounds[sectionId]);
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('header, section').forEach(section => {
+                observer.observe(section);
+            });
+
+            function changeBackground(url) {
+                if (!url) return;
+
+                // 次のレイヤーを準備
+                const nextLayer = activeLayer === 1 ? layer2 : layer1;
+                const currentLayer = activeLayer === 1 ? layer1 : layer2;
+
+                nextLayer.style.backgroundImage = `url('${url}')`;
+
+                // クロスフェード実行
+                nextLayer.classList.remove('opacity-0');
+                nextLayer.classList.add('opacity-100');
+
+                currentLayer.classList.remove('opacity-100');
+                currentLayer.classList.add('opacity-0');
+
+                // アクティブレイヤーを交代
+                activeLayer = activeLayer === 1 ? 2 : 1;
+            }
+        }
+    </script>
+</body>
+
+</html>
