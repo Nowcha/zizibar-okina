@@ -52,6 +52,15 @@
             transform: rotateY(180deg);
         }
 
+        /* 反転時のz-index制御（safari対策） */
+        .flip-card.flipped .flip-card-front {
+            z-index: 1;
+        }
+
+        .flip-card.flipped .flip-card-back {
+            z-index: 2;
+        }
+
         .flip-card-front,
         .flip-card-back {
             position: absolute;
@@ -62,10 +71,14 @@
             border-radius: 0.5rem;
             /* rounded-lg と合わせる */
             overflow: hidden;
+            /* Safariでのチラつき防止 */
+            transform: translate3d(0, 0, 0);
         }
 
         .flip-card-front {
             background-color: transparent;
+            z-index: 2;
+            transform: rotateY(0deg);
         }
 
         /* Staff用丸形対応 */
@@ -79,6 +92,7 @@
             /* gray-800 */
             color: white;
             transform: rotateY(180deg);
+            z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -316,7 +330,7 @@
                 <li>過度なパーティクル、巨大なアバター、音が出るアバターなどの使用</li>
             </ul>
             <p class="mt-6 text-center text-gray-500 text-sm">
-                全てのお客様が快適に過ごせるよう、ご協力をお願いいたします
+                全てのお客様が快適に過ごせるよう<br class="md:hidden">ご協力をお願いいたします
             </p>
         </div>
     </section>
